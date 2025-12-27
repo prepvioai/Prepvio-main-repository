@@ -570,7 +570,7 @@ app.post("/run", async (req, res) => {
 app.use("/api/auth", Authroute);
 app.use("/api/companies", companyRoutes);
 app.use("/api/interview", interviewRoutes);
-app.use("/api/user", userRoutes);
+app.use("/api/users", userRoutes);
 
 
 

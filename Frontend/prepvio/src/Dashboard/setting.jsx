@@ -25,7 +25,7 @@ function Account() {
     const fetchProfile = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/user/me",
+          "http://localhost:5000/api/users/me",
           { withCredentials: true }
         );
 
@@ -69,7 +69,7 @@ function Account() {
 
     try {
       await axios.put(
-        "http://localhost:5000/api/user/me",
+        "http://localhost:5000/api/users/me",
         {
           firstName: formData.firstName,
           lastName: formData.lastName,

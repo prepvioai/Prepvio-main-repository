@@ -263,7 +263,7 @@ const Header = () => {
       )}
       
       {/* FIXED SPACER */}
-      <div className="h-20 md:h-[5.5rem]" />
+      <div className="h-16 md:h-20" />
     </>
   );
 };

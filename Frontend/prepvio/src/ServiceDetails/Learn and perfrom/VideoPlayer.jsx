@@ -147,16 +147,16 @@ const PlayListPlayer = ({ video, onPlayerReady, onStateChange, onWatchLater, isS
 
   const title = video?.snippet?.title || "";
 
-  useEffect(() => {
-    const disableContextMenu = (e) => e.preventDefault();
-    const disableSelect = (e) => e.preventDefault();
-    document.addEventListener("contextmenu", disableContextMenu);
-    document.addEventListener("selectstart", disableSelect);
-    return () => {
-      document.removeEventListener("contextmenu", disableContextMenu);
-      document.removeEventListener("selectstart", disableSelect);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const disableContextMenu = (e) => e.preventDefault();
+  //   const disableSelect = (e) => e.preventDefault();
+  //   document.addEventListener("contextmenu", disableContextMenu);
+  //   document.addEventListener("selectstart", disableSelect);
+  //   return () => {
+  //     document.removeEventListener("contextmenu", disableContextMenu);
+  //     document.removeEventListener("selectstart", disableSelect);
+  //   };
+  // }, []);
 
   if (!videoId) {
     return (
@@ -561,7 +561,7 @@ export default function VideoPlayer() {
   };
 
   const handleVideoSelect = (video) => {
-  // Save current video before switch
+  // Save current video progress
   if (player && selectedVideoId) {
     try {
       const time = Math.floor(player.getCurrentTime());
@@ -576,21 +576,23 @@ export default function VideoPlayer() {
 
   lastSavedRef.current = 0;
 
-  // ✅ FIX STARTS HERE
+  // ✅ USE THE VIDEO YOU CLICKED
   const vid =
-  initialVideo?.snippet?.resourceId?.videoId ||
-  initialVideo?.id;
+    video?.snippet?.resourceId?.videoId ||
+    video?.id;
 
-setSelectedVideo(initialVideo);
-setSelectedVideoId(vid);
+  if (!vid) return;
 
-  // ✅ FIX ENDS HERE
+  setSelectedVideo(video);
+  setSelectedVideoId(vid);
 
+  // Reset quiz state
   setShownQuizzes(new Set());
   setQuizQueue([]);
   setIsQuizActive(false);
   setCurrentQuiz(null);
 };
+
 
 
   /* ======================================================

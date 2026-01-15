@@ -5,16 +5,26 @@ import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/authstore";
 
 // UI Component for Social Buttons (Visual only)
-const SocialButton = ({ icon: Icon, label }) => (
-  <button type="button" className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md text-gray-700 font-semibold py-2.5 rounded-xl transition-all duration-200 group text-sm">
+const SocialButton = ({ icon: Icon, label, onClick }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md text-gray-700 font-semibold py-2.5 rounded-xl transition-all duration-200 group text-sm"
+  >
     <Icon className="w-4 h-4 text-gray-500 group-hover:text-gray-900 transition-colors" />
     <span>{label}</span>
   </button>
 );
 
+
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleGoogleLogin = () => {
+  window.location.href = "http://localhost:5000/api/auth/google";
+};
+
 
   const { login, isLoading, error } = useAuthStore();
 
@@ -64,8 +74,13 @@ const LoginPage = () => {
         {/* Social Buttons */}
         <div className="space-y-4">
           <div className="space-y-2">
-            <SocialButton icon={Globe} label="Continue with Google" />
-            <SocialButton icon={Linkedin} label="Continue with LinkedIn" />
+            <SocialButton
+  icon={Globe}
+  label="Continue with Google"
+  onClick={handleGoogleLogin}
+/>
+
+            {/* <SocialButton icon={Linkedin} label="Continue with LinkedIn" /> */}
           </div>
 
           <div className="relative flex items-center py-1">

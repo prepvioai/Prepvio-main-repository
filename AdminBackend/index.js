@@ -10,7 +10,7 @@ import quizzesRouter from './server/routes/quizzes.route.js';
 import videosRouter from './server/routes/videos.route.js'; // ✅ Import videos route
 import categoryRoutes from "./server/routes/categories.route.js";
 import dashboardRouter from "./server/routes/dashboard.route.js";
-
+import AptitudeRouter from './Server/routes/aptitude.route.js'
 
 dotenv.config();
 
@@ -55,6 +55,7 @@ app.use('/api/quizzes', quizzesRouter);
 app.use('/api/videos', videosRouter);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/dashboard", dashboardRouter);
+app.use("/api/aptitude", AptitudeRouter);
 
 
 // Start the server

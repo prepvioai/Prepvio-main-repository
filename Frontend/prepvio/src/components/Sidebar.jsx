@@ -283,6 +283,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
           </DropdownMenu>
 
           <SidebarLink icon={Search} label="Interview Analysis" to="/dashboard/interview-analysis" collapsed={isCollapsed} />
+          <SidebarLink icon={Search} label="Aptitude Test Analysis" to="/dashboard/aptitude-test-analysis" collapsed={isCollapsed} />
           <SidebarLink icon={CreditCard} label="Payroll" to="/dashboard/payroll" collapsed={isCollapsed} />
 
           <DropdownMenu title="Help Desk" icon={LifeBuoy} collapsed={isCollapsed} setSidebarCollapsed={setIsCollapsed}>

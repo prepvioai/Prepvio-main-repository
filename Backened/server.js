@@ -1,12 +1,16 @@
+import "./env.js";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
+// dotenv.config();
 import cookieParser from "cookie-parser";
 import axios from "axios";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import PDFDocument from "pdfkit";
 import { ConnectDB } from "./DB/ConnectDB.js";
+import passport from "passport";
+import "./config/passport.js"; 
 
 // Route imports
 import companyRoutes from "./check-your-ability/routes/companyRoutes.js";
@@ -20,7 +24,7 @@ import fs from "fs";
 
 
 
-dotenv.config();
+
 const app = express();
 
 // --- 1. CORS Configuration ---
@@ -36,6 +40,8 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/interview-session", interviewSessionRoutes);
+app.use(passport.initialize());
+
 
 
 

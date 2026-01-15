@@ -1,6 +1,8 @@
 import { User } from "../Models/User.js";
 import bcryptjs from "bcryptjs";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
+
 
 import { generateTokenAndSetCookie } from "../Utils/generateTokenAndSetCookie.js";
 import {
@@ -117,6 +119,13 @@ export const login = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid credentials" });
     }
 
+     if (user.authProvider === "google") {
+      return res.status(400).json({
+        success: false,
+        message: "This account uses Google sign-in",
+      });
+    }
+
     const isPasswordValid = await bcryptjs.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({ success: false, message: "Invalid credentials" });
@@ -193,3 +202,21 @@ export const logout = async (req, res) => {
   res.clearCookie("token");
   res.status(200).json({ success: true, message: "Logged out successfully" });
 };
+
+export const googleAuthCallback = async (req, res) => {
+  try {
+    const user = req.user; // injected by passport
+
+    // Issue SAME JWT as normal users
+    generateTokenAndSetCookie(res, user._id);
+
+    user.lastLogin = new Date();
+    await user.save();
+
+    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+  } catch (error) {
+    console.error("Google auth error:", error);
+    res.redirect(`${process.env.CLIENT_URL}/login?error=oauth_failed`);
+  }
+};
+

@@ -41,7 +41,7 @@ const Rounds = ({ companyType, role }) => {
 
       const sessionId = res.data.sessionId;
 
-      navigate("/services/check-your-ability/interview", {
+      navigate("/services/check-your-ability/interview/start", {
         state: {
           companyType,
           role,

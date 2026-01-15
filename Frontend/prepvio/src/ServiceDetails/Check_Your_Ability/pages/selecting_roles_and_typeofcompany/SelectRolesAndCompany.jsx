@@ -188,7 +188,7 @@ const SelectRolesAndCompany = ({
 
   const handleStartInterview = () => {
     if (companyType && role) {
-      navigate("/services/check-your-ability/rounds");
+      navigate("/services/check-your-ability/interview/rounds");
     }
   };
 
@@ -369,7 +369,7 @@ const SelectRolesAndCompany = ({
             }`}
           />
           <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              Step 1 of 2
+              Step 2 of 3
             </span>
           <div className="w-2 h-2 rounded-full bg-gray-300" />
         </motion.div>

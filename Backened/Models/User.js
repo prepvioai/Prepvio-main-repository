@@ -40,6 +40,130 @@ const courseProgressSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const feedbackSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    // Context
+    courseId: { type: String },
+    channelId: { type: String },
+
+    // Type
+    type: {
+      type: String,
+      enum: ["course", "general"],
+      required: true,
+    },
+
+    category: {
+      type: String,
+      enum: ["content", "bug", "ui", "general"],
+      required: true,
+    },
+
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
+    },
+
+    message: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
+
+/* ======================================================
+   APTITUDE TEST ATTEMPTS
+====================================================== */
+const aptitudeAttemptSchema = new mongoose.Schema(
+  {
+    topic: {
+      type: String,
+      required: true,
+    },
+
+    totalQuestions: {
+      type: Number,
+      required: true,
+    },
+
+    correctAnswers: {
+      type: Number,
+      required: true,
+    },
+
+    percentage: {
+      type: Number,
+      required: true,
+    },
+
+    timeTakenSeconds: {
+      type: Number,
+      required: true,
+    },
+
+    answers: [
+      {
+        questionId: {
+          type: String,
+          required: true,
+        },
+
+        // 🔽 SNAPSHOT (THIS IS THE KEY)
+        question: {
+          type: String,
+          required: true,
+        },
+
+        options: [
+          {
+            text: {
+              type: String,
+              required: true,
+            },
+          },
+        ],
+
+        explanation: {
+          type: String,
+        },
+
+        difficulty: {
+          type: String,
+          enum: ["easy", "medium", "hard"],
+          default: "medium",
+        },
+
+        selectedIndex: {
+          type: Number,
+          required: true,
+        },
+
+        correctIndex: {
+          type: Number,
+          required: true,
+        },
+
+        isCorrect: {
+          type: Boolean,
+          required: true,
+        },
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
+
+
 /* ======================================================
    USER SCHEMA (SOURCE OF TRUTH)
 ====================================================== */
@@ -69,6 +193,16 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    authProvider: {
+  type: String,
+  enum: ["local", "google"],
+  default: "local",
+},
+
+googleId: {
+  type: String,
+},
 
     verificationToken: {
       type: String,
@@ -106,6 +240,11 @@ const userSchema = new mongoose.Schema(
 
     /* ================= LEARNING PROGRESS ================= */
     courseProgress: [courseProgressSchema],
+
+    feedbacks: [feedbackSchema],
+    /* ================= APTITUDE ================= */
+aptitudeAttempts: [aptitudeAttemptSchema],
+
 
     /* ================= PROFILE ================= */
     phone: String,

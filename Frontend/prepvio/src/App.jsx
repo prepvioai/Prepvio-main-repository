@@ -21,6 +21,7 @@ import Payment from "./Dashboard/Payment.jsx";
 import SavedCourses from "./Dashboard/SavedCourse.jsx";
 import Account from "./Dashboard/setting.jsx";
 import InterviewPreview from "./Dashboard/InterviewPreview.jsx";
+import AptitudeTestAnalysis from "./Dashboard/AptitudeTestAnalysis.jsx";
 
 import LearnAndPerform from "./ServiceDetails/Learn and perfrom/LearnAndPerfrom.jsx";
 import Channels from "./ServiceDetails/Learn and perfrom/Channels.jsx";
@@ -30,6 +31,12 @@ import SelectRolesAndCompany from "./ServiceDetails/Check_Your_Ability/pages/sel
 import Rounds from "./ServiceDetails/Check_Your_Ability/pages/selecting_roles_and_typeofcompany/Rounds.jsx";
 import InterviewScreen from "./ServiceDetails/Check_Your_Ability/pages/Interview_page/InterviewScreen.jsx";
 import AfterInterview from "./ServiceDetails/Check_Your_Ability/pages/Interview_page/AfterInterview.jsx";
+
+import Categories from "./ServiceDetails/Check_Your_Ability/pages/selecting category/Categories.jsx";
+import Aptitude from "./ServiceDetails/Check_Your_Ability/pages/Aptitude/Aptitude.jsx";
+
+import Feedback from "./Dashboard/Feedback.jsx";
+import AptitudeReviewMode from "./Dashboard/AptitudeReviewMode.jsx";
 
 import ScrollToTop from "./ScrollToTop.jsx";
 import LoadingSpinner from "./components/LoadingSpinner.jsx";
@@ -101,6 +108,9 @@ function App() {
 				{/* Interview Preview (Public) */}
 				<Route path="/interview-preview" element={<InterviewPreview />} />
 
+				<Route path="/aptitude-review" element={<AptitudeReviewMode />} />
+
+
 				{/* Dashboard (Protected) */}
 				<Route
 					path="/dashboard"
@@ -119,7 +129,11 @@ function App() {
 					<Route path="payroll" element={<Payment />} />
 					<Route path="messages/inbox" element={<Message />} />
 					<Route path="help/faq" element={<FAQs />} />
+					<Route path="feedback" element={<Feedback />} />
+					<Route path="aptitude-test-analysis" element={<AptitudeTestAnalysis />} />
+					
 				</Route>
+				
 
 				{/* Auth */}
 				<Route
@@ -150,8 +164,18 @@ function App() {
 
 				{/* Check Your Ability Flow */}
 				<Route path="/services/check-your-ability">
+					{/* Step 1: Category selection */}
+					<Route index element={<Categories />} />
+
 					<Route
-						index
+						path="/services/check-your-ability/aptitude"
+						element={<Aptitude />}
+					/>
+
+
+					{/* Step 2: Interview → Select company & role */}
+					<Route
+						path="interview"
 						element={
 							<SelectRolesAndCompany
 								companyType={companyType}
@@ -161,19 +185,27 @@ function App() {
 							/>
 						}
 					/>
+
+					{/* Step 3: Select rounds */}
 					<Route
-						path="rounds"
+						path="interview/rounds"
 						element={<Rounds companyType={companyType} role={role} />}
 					/>
+
+					{/* Step 4: Interview screen */}
 					<Route
-						path="interview"
+						path="interview/start"
 						element={<InterviewScreen companyType={companyType} role={role} />}
 					/>
-					<Route path="after-interview" element={<AfterInterview />} />
+
+					{/* Step 5: After interview */}
+					<Route path="interview/after-interview" element={<AfterInterview />} />
 				</Route>
 
+
 				{/* Catch-all */}
-				<Route path="*" element={<Navigate to="/" replace />} />
+				<Route path='*' element={<Navigate to='/' replace />} />
+
 			</Routes>
 
 			<Footer />

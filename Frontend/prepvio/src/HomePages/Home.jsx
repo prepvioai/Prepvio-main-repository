@@ -205,7 +205,7 @@ const SuccessStoryCard = () => (
         </div>
         <div className="flex items-center justify-between">
           <div className="flex -space-x-2">{[1, 2, 3, 4].map((i) => (<div key={i} className={`w-7 h-7 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-[8px] overflow-hidden`}><img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="user" className="w-full h-full object-cover" /></div>))}</div>
-          <div className="text-xs text-green-600 font-bold bg-green-50 px-3 py-1 rounded-full shadow-sm border border-green-100">Team!</div>
+          <div className="text-xs text-green-600 font-bold bg-green-50 px-3 py-1 rounded-full shadow-sm border border-green-100">Coming Soon..</div>
         </div>
       </div>
     </motion.div>
@@ -327,7 +327,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <motion.div initial="hidden" animate="visible" variants={containerVariants} className="w-full max-w-[1600px] mx-auto bg-white/40 backdrop-blur-xl rounded-[3.5rem] p-6 md:p-10 lg:p-12 border border-white/60 shadow-2xl shadow-gray-200/50 relative overflow-hidden z-10 mt-2">
+    <motion.div initial="hidden" animate="visible" variants={containerVariants} className="w-full max-w-[1600px] mx-auto bg-white/40 backdrop-blur-xl rounded-[3.5rem] p-6 md:p-10 lg:p-12 border border-white/60 shadow-2xl shadow-gray-200/50 relative overflow-hidden z-10 -mt-5">
       <FloatingDecoration />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8 mt-6 lg:mt-10 min-h-[600px]">
         <div className="lg:col-span-5 flex flex-col justify-between gap-8 lg:gap-0"><div className="flex-grow flex flex-col justify-center"><HeroTextSection /></div><div className="mt-8 lg:mt-0"><AgentCard /></div></div>

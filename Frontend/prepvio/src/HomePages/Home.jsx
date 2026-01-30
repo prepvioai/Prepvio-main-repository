@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; 
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+
 import {
   ArrowRight,
   Globe,
@@ -12,7 +14,14 @@ import {
   Activity,
   AlertCircle,
   CheckCircle2,
-  Star
+  Star,
+  Calendar,
+  Lock,
+  Sparkles,
+  Check,
+  Zap,
+  Crown,
+  Rocket
 } from "lucide-react";
 
 // ✅ Import Existing Functional Components
@@ -20,14 +29,17 @@ import Header from "./Header";
 import ZigZagServices from "../HomePages/ZigZagServices";
 import AboutUs from "../HomePages/AboutUs";
 import FAQSection from "./Faqs";
+import { useAuthStore } from "../store/authstore";
+
+// Configure axios
+axios.defaults.withCredentials = true;
 
 /**
  * ASSETS & CONFIGURATION
- * Referencing images from the 'public' folder directly.
  */
 const ASSETS = {
-  babaAi: "/BABA AI.png", // Replace with your exact filename in public folder
-  siraAi: "/SIRA.png", // Replace with your exact filename in public folder
+  babaAi: "/BABA AI.png",
+  siraAi: "/SIRA.png",
 };
 
 /**
@@ -60,6 +72,15 @@ const switchVariants = {
   initial: { opacity: 0, scale: 0.9, rotateY: 15 },
   animate: { opacity: 1, scale: 1, rotateY: 0, transition: { duration: 0.8, type: "spring" } },
   exit: { opacity: 0, scale: 0.9, rotateY: -15, transition: { duration: 0.5 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { type: "spring", stiffness: 100, damping: 20 } 
+  }
 };
 
 /**
@@ -105,7 +126,6 @@ const AgentCard = () => (
     <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-colors pointer-events-none" />
     <div className="relative shrink-0">
       <div className="w-20 h-20 rounded-full absolute -inset-1 bg-gradient-to-tr from-yellow-200 to-transparent blur-md opacity-20 animate-pulse pointer-events-none"></div>
-      {/* BABA AI IMAGE */}
       <img src={ASSETS.babaAi} alt="BABA AI" className="w-20 h-20 rounded-2xl object-cover relative z-10 border-[3px] border-[#3A3A3A] shadow-lg" />
       <div className="absolute -bottom-2 -right-2 bg-[#D4F478] text-black text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-full z-20 shadow-lg border border-[#2A2A2A]">
         BABA AI
@@ -181,7 +201,6 @@ const SuccessStoryCard = () => (
       <div className="relative mt-8 mb-4 w-full flex justify-center perspective-1000">
         <div className="w-48 h-48 rounded-full bg-blue-100/50 absolute top-4 blur-2xl scale-75 animate-pulse pointer-events-none" />
         
-        {/* SIRA AI IMAGE */}
         <motion.img 
           initial={{ rotateY: 10 }} 
           whileHover={{ rotateY: 0, scale: 1.05 }} 
@@ -290,32 +309,317 @@ const ProblemSection = () => (
   </div>
 );
 
-const PricingCard = ({ tier, price, features, recommended, color }) => (
-  <motion.div whileHover={{ y: -5 }} className={`p-8 rounded-[2.5rem] flex flex-col gap-6 relative overflow-hidden z-20 ${recommended ? "bg-[#1A1A1A] text-white shadow-2xl shadow-gray-900/30" : "bg-white border border-gray-100 shadow-xl shadow-gray-100"}`}>
-    {recommended && (<div className="absolute top-0 right-0 bg-[#D4F478] text-black text-xs font-bold px-4 py-2 rounded-bl-2xl">MOST POPULAR</div>)}
-    <div>
-      <h3 className={`text-xl font-bold mb-2 ${recommended ? "text-gray-400" : "text-gray-500"}`}>{tier}</h3>
-      <div className="flex items-baseline gap-1"><span className={`text-5xl font-black ${recommended ? "text-white" : "text-gray-900"}`}>{price}</span>{price !== "Free" && (<span className={`text-sm ${recommended ? "text-gray-500" : "text-gray-400"}`}>/month</span>)}</div>
-    </div>
-    <ul className="space-y-4 flex-grow">{features.map((f, i) => (<li key={i} className="flex items-start gap-3 text-sm font-medium"><CheckCircle2 className={`w-5 h-5 flex-shrink-0 ${recommended ? "text-[#D4F478]" : "text-green-500"}`} /><span className={recommended ? "text-gray-300" : "text-gray-600"}>{f}</span></li>))}</ul>
-    <Link to="/signup">
-        <button className={`w-full py-4 rounded-xl font-bold transition-all cursor-pointer ${recommended ? "bg-[#D4F478] text-black hover:bg-[#cbf060]" : "bg-gray-100 text-gray-900 hover:bg-gray-200"}`}>
-        {recommended ? "Start Free Trial" : "Get Started"}
-        </button>
-    </Link>
-  </motion.div>
-);
+// ✅ PLANS DATA (from payment.jsx)
+const plans = [
+  {
+    id: 'monthly',
+    name: 'Basic',
+    price: '₹79',
+    priceValue: 79,
+    duration: '/month',
+    interviews: 2,
+    icon: Zap,
+    isRecommended: false, 
+    color: 'bg-blue-50 text-blue-600',
+    description: "Essential tools for casual learners.",
+    features: [
+      '2 AI Interviews',
+      'Standard support',
+      'Course certificates',
+      'Mobile app access'
+    ]
+  },
+  {
+    id: 'premium',
+    name: 'Pro Access',
+    price: '₹120',
+    priceValue: 120,
+    duration: '/month',
+    interviews: 4,
+    icon: Crown,
+    isRecommended: true, 
+    color: 'bg-[#D4F478] text-black', 
+    description: "Best for serious students & job seekers.",
+    features: [
+      '4 AI Interviews',
+      'Priority 24/7 support',
+      'Offline downloads',
+      'Exclusive webinars',
+      'Interview prep module'
+    ]
+  },
+  {
+    id: 'yearly',
+    name: 'Yearly Plan',
+    price: '₹999',
+    priceValue: 999,
+    duration: '/year',
+    interviews: 50,
+    icon: Rocket,
+    isRecommended: false,
+    color: 'bg-orange-50 text-orange-600',
+    description: "Best value for dedicated learners.",
+    features: [
+      '50 AI Interviews',
+      '1-on-1 Mentorship',
+      'Live doubt sessions',
+      'Job placement assistance',
+      'Custom learning path'
+    ]
+  },
+  {
+    id: 'lifetime',
+    name: 'Lifetime',
+    price: '₹2,999',
+    priceValue: 2999,
+    duration: '/lifetime',
+    interviews: 999,
+    icon: Crown,
+    isRecommended: false,
+    color: 'bg-purple-50 text-purple-600',
+    description: "Unlimited access forever.",
+    features: [
+      'Unlimited AI Interviews',
+      'Lifetime access',
+      'All premium features',
+      'Priority support',
+      'Future updates included'
+    ]
+  }
+];
 
-const PricingSection = () => (
-  <div className="max-w-[1600px] mx-auto px-6 py-20">
-    <div className="text-center max-w-2xl mx-auto mb-16"><h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-6">Simple Pricing</h2><p className="text-gray-500 text-lg">No credit card required. Start with 3 free practice interviews.</p></div>
-    <div className="grid md:grid-cols-3 gap-8 items-center">
-      <PricingCard tier="Starter" price="Free" features={["3 practice interviews", "Basic feedback & scoring", "Limited question bank"]} />
-      <div className="transform md:-translate-y-4"><PricingCard tier="Pro" price="$29" recommended={true} features={["Unlimited interviews", "Advanced AI feedback", "All industries & questions", "Progress tracking"]} /></div>
-      <PricingCard tier="University" price="Custom" features={["Everything in Pro", "Bulk student licenses", "Admin dashboard", "Dedicated support"]} />
-    </div>
+// ✅ PRICING SECTION WITH EXACT PAYMENT.JSX DESIGN
+const PricingSection = () => {
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [currentPlan, setCurrentPlan] = useState(null);
+  const { refreshUser } = useAuthStore();
+
+  // ✅ Fetch current subscription
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:5000/api/payment/interview-status",
+          { withCredentials: true }
+        );
+        
+        if (res.data.subscription && res.data.subscription.interviewsTotal > 0) {
+          setCurrentPlan(res.data.subscription);
+        }
+      } catch (err) {
+        console.error("Failed to fetch subscription", err);
+      }
+    };
+
+    fetchSubscription();
+  }, []);
+
+  // ✅ Razorpay Payment Handler
+  const handlePaymentWithPlan = async (planId) => {
+    setIsProcessing(true);
+    
+    try {
+      const { data } = await axios.post(
+        "http://localhost:5000/api/payment/create-order",
+        { planId }
+      );
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: data.amount,
+        currency: data.currency,
+        order_id: data.orderId,
+        name: "Prepvio AI",
+        description: `${data.planName} - ${data.interviews} Interviews`,
+        handler: async function (response) {
+          try {
+            const verifyRes = await axios.post(
+              "http://localhost:5000/api/payment/verify",
+              response
+            );
+
+            if (verifyRes.data.success) {
+              await refreshUser();
+              
+              // Refresh current plan
+              const res = await axios.get(
+                "http://localhost:5000/api/payment/interview-status",
+                { withCredentials: true }
+              );
+              
+              if (res.data.subscription) {
+                setCurrentPlan(res.data.subscription);
+              }
+
+              alert(`Payment successful! ${verifyRes.data.interviews.remaining} interviews added.`);
+            }
+          } catch (err) {
+            console.error("Verification error:", err);
+            alert("Payment verification failed. Please contact support.");
+          } finally {
+            setIsProcessing(false);
+            setSelectedPlan(null);
+          }
+        },
+        prefill: {
+          name: "Test User",
+          email: "test@example.com",
+        },
+        theme: {
+          color: "#1A1A1A",
+        },
+        modal: {
+          ondismiss: function() {
+            setIsProcessing(false);
+            setSelectedPlan(null);
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+      
+    } catch (err) {
+      console.error("Payment error:", err);
+      alert("Payment initiation failed. Please try again.");
+      setIsProcessing(false);
+      setSelectedPlan(null);
+    }
+  };
+
+  const handlePlanSelect = (planId) => {
+    setSelectedPlan(planId);
+    handlePaymentWithPlan(planId);
+  };
+  
+
+  return (
+    <div className="max-w-[1600px] mx-auto px-6 ">
+    
+      <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="text-center max-w-3xl mx-auto mb-30"
+>
+  {/* Eyebrow */}
+  <div className="text-center max-w-2xl mx-auto mb-10">
+  <h2 className="text-4xl md:text-5xl font-black text-gray-900 ">Simple Pricing</h2>
+  {/* <p className="text-gray-500 text-lg">No credit card required. Start with 3 free practice interviews.</p> */}
   </div>
-);
+  
+</motion.div>
+
+
+      
+
+      {/* --- PRICING CARDS --- */}
+      <motion.div 
+        id="pricing-cards"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start"
+      >
+        {plans.map((plan) => {
+          const Icon = plan.icon;
+          const isDark = plan.isRecommended;
+          const isCurrentPlan = currentPlan?.active && currentPlan?.planId === plan.id;
+          const hasCreditsRemaining = isCurrentPlan && currentPlan.interviewsRemaining > 0;
+          const disableButton = isCurrentPlan && hasCreditsRemaining;
+          
+          return (
+            <motion.div 
+              key={plan.id}
+              variants={cardVariants}
+              whileHover={{ y: -10 }}
+              className={`
+                relative rounded-[2.5rem] p-8 md:p-10 transition-all duration-500 flex flex-col h-full
+                ${isDark 
+                  ? 'bg-[#1A1A1A] text-white shadow-2xl shadow-gray-900/40 lg:scale-110 z-10 ring-1 ring-white/10' 
+                  : 'bg-white border border-gray-100 text-gray-900 shadow-xl shadow-gray-200/50 hover:border-gray-300'
+                }
+              `}
+            >
+              {/* Popular Badge */}
+              {isDark && (
+                <div className="absolute top-0 inset-x-0 flex justify-center -mt-4">
+                  <div className="bg-[#D4F478] text-black text-xs font-black px-6 py-2 rounded-full shadow-lg tracking-widest uppercase border-4 border-[#FDFBF9]">
+                    Most Popular
+                  </div>
+                </div>
+              )}
+
+              {/* Card Header */}
+              <div className="mb-8">
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm ${plan.color}`}>
+                  <Icon className="w-7 h-7" />
+                </div>
+                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                <p className={`text-sm font-medium mb-6 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {plan.description}
+                </p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-5xl font-black tracking-tight">{plan.price}</span>
+                  <span className={`text-lg font-medium ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                    {plan.duration}
+                  </span>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className={`h-px w-full mb-8 ${isDark ? 'bg-white/10' : 'bg-gray-100'}`} />
+
+              {/* Features */}
+              <ul className="space-y-4 mb-8 flex-1">
+                {plan.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-start gap-3">
+                    <div className={`mt-0.5 rounded-full p-0.5 ${isDark ? 'bg-[#D4F478] text-black' : 'bg-green-100 text-green-600'}`}>
+                      <Check className="w-3 h-3" strokeWidth={4} />
+                    </div>
+                    <span className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Action Button */}
+              <button
+                onClick={() => handlePlanSelect(plan.id)}
+                disabled={disableButton || (isProcessing && selectedPlan === plan.id)}
+                className={`
+                  w-full py-4 rounded-2xl font-bold text-sm tracking-wide transition-all shadow-lg flex items-center justify-center gap-2
+                  ${
+                    disableButton
+                      ? 'bg-green-100 text-green-700 cursor-not-allowed'
+                      : isProcessing && selectedPlan === plan.id
+                        ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                        : isDark
+                          ? 'bg-[#D4F478] text-black hover:bg-white hover:scale-[1.02]'
+                          : 'bg-[#1A1A1A] text-white hover:bg-gray-800'
+                  }
+                `}
+              >
+                {disableButton ? (
+                  <>
+                    <CheckCircle2 className="w-5 h-5" />
+                    Current Plan
+                  </>
+                ) : isProcessing && selectedPlan === plan.id ? (
+                  <>Processing...</>
+                ) : (
+                  <>
+                    Choose {plan.name}
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
+              </button>
+            </motion.div>
+          );
+        })}
+      </motion.div>
+    </div>
+  );
+};
 
 // ✅ HERO COMPONENT
 const Hero = () => {
@@ -381,158 +685,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
-
-
-
-
-
-// import React from "react";
-// import { Link } from "react-router-dom";
-// import ZigZagServices from "../HomePages/ZigZagServices";
-// import Header from "../HomePages/Header";
-// import AboutUs from "../HomePages/AboutUs";
-// import { motion } from "framer-motion";
-// import { CheckCircle, ChevronDown } from "lucide-react";
-
-// const ZigZagServices = () => {
-//   const [services, setServices] = React.useState([]);
-
-//   React.useEffect(() => {
-//     // Mock data for services since the backend is not available
-//     const mockServices = [
-//       { id: 1, title: "Mock Interviews", description: "Practice interviews with our advanced AI." },
-//       { id: 2, title: "Skill Analysis", description: "Get detailed feedback on your performance." },
-//       { id: 3, title: "Resume Builder", description: "Create a professional resume in minutes." }
-//     ];
-//     setServices(mockServices);
-//   }, []);
-
-//   const handleArrowClick = (serviceId) => {
-//     console.log(`Arrow clicked for service ${serviceId}. Navigating to service page...`);
-//   };
-
-//   return (
-//     <div className="flex flex-col items-center mt-20 outline-none xl:border-none bg-gradient-to-r from-blue-50 to-yellow-50 space-y-10">
-//       {services.map((service, index) => (
-//         <div
-//           key={service.id}
-//           className={`w-[90%] md:w-[70%] lg:w-[60%] flex ${
-//             index % 2 === 0 ? "justify-start" : "justify-end"
-//           }`}
-//         >
-//           <div
-//             className={`w-full md:w-[80%] lg:w-[70%] bg-white  rounded-2xl shadow-xl overflow-hidden h-auto transition-transform duration-500 ${
-//               index % 2 === 0 ? "md:-translate-x-10" : "md:translate-x-10"
-//             }`}
-//           >
-//             <div className="bg-gradient-to-br from-indigo-100 via-purple-100 to-yellow-100 h-[200px] relative mt-40">
-//               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-white rounded-full opacity-70 shadow-md"></div>
-//             </div>
-
-//             <div className="p-6 relative">
-//               <h3 className="text-2xl font-semibold flex items-center">
-//                 <span className="mr-3 text-indigo-600 font-bold text-3xl">
-//                   {service.id < 10 ? `0${service.id}` : service.id}
-//                 </span>
-//                 {service.title}
-//               </h3>
-//               <p className="text-lg text-gray-600 mt-1 leading-relaxed">{service.description}</p>
-
-//               <button
-//                 onClick={() => handleArrowClick(service.id)}
-//                 className="mt-6 flex items-center text-indigo-600 hover:text-indigo-800 transition-colors duration-200"
-//               >
-//                 <svg
-//                   xmlns="http://www.w3.org/2000/svg"
-//                   className="h-8 w-8"
-//                   fill="none"
-//                   viewBox="0 0 24 24"
-//                   stroke="currentColor"
-//                   strokeWidth={2}
-//                 >
-//                   <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-//                 </svg>
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
-
-// const Home = () => {
-//   return (
-//     <div className="border-b xl:border-none bg-gradient-to-r from-blue-50 to-yellow-50">
-//       <Header />
-
-//       {/* ✅ Hero Section */}
-//       <main className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center">
-//         <div className="flex flex-col space-y-3 sm:space-y-4">
-//           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-//             Learn and <br /> Practice Without Limit
-//           </h1>
-//           <p className="text-base sm:text-lg text-gray-600">
-//             Start your Journey, Rest Prepvio will do.
-//           </p>
-
-//           {/* ✅ Button Container */}
-//           <div className="flex flex-row gap-4 sm:gap-6 w-fit pt-2 sm:pt-4">
-//             <Link
-//               to="/signup"
-//               className="bg-gray-900 text-white hover:text-black px-6 sm:px-8 py-3 rounded-lg font-medium w-fit hover:bg-gray-100 shadow-md transition"
-//             >
-//               Get Started
-//             </Link>
-//             <button className="bg-gray-900 text-white hover:text-black px-6 sm:px-8 py-3 rounded-lg font-medium w-fit hover:bg-gray-100 shadow-md transition">
-//               Try for Free
-//             </button>
-//           </div>
-//         </div>
-
-//         {/* ✅ Hero Graphic */}
-//         <div className="relative w-full aspect-square md:h-[500px] flex items-center justify-center">
-//           <div className="absolute w-[75%] h-[75%] bg-gradient-to-br from-indigo-100 to-gray-200 rounded-[2.5rem] transform rotate-[-20deg] opacity-70"></div>
-//           <div className="absolute w-[55%] h-[80%] bg-gray-300 rounded-[5rem] opacity-70"></div>
-//           <div className="absolute w-[55%] h-[65%] rounded-full bg-gradient-to-bl from-blue-100 to-purple-100 opacity-60"></div>
-//           <div className="absolute w-[28%] h-[45%] bg-gray-200 rounded-3xl opacity-80 bottom-0 right-0"></div>
-//           <div className="absolute w-2/3 h-2/3 bg-gray-200 rounded-full opacity-60 top-0 left-0"></div>
-//           <div className="absolute w-[18%] h-[18%] bg-gray-200 rounded-lg opacity-80"></div>
-//           <div className="absolute w-1/4 h-1/4 bg-gray-100 rounded-full opacity-50 top-1/4 right-0"></div>
-//           <div className="absolute w-1/4 h-1/4 bg-gray-100 rounded-full opacity-40 top-0 left-1/4"></div>
-//         </div>
-//       </main>
-
-//       {/* ✅ Trusted Logos */}
-//       <section className="mt-10 sm:mt-12 py-6 sm:py-8 container mx-auto px-4 sm:px-6">
-//         <p className="text-sm uppercase tracking-wide text-gray-500 font-semibold mb-4 text-center">
-//           Trusted by aspiring professionals at
-//         </p>
-//         <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10">
-//           {["A", "B", "C", "D"].map((c, i) => (
-//             <img
-//               key={i}
-//               src={`https://placehold.co/120x40/f3f4f6/1f2937?text=Company+${c}`}
-//               alt={`Company ${c}`}
-//               className="h-8 md:h-10 opacity-75 grayscale hover:grayscale-0 transition-all"
-//             />
-//           ))}
-//         </div>
-//       </section>
-
-//       {/* ✅ Services Section */}
-//       <section id="explore" className="py-10 sm:py-14 container mx-auto px-4 sm:px-6">
-//         <ZigZagServices />
-//       </section>
-
-//       {/* ✅ About Us + Core Features + CTA */}
-//       <section id="about" className="py-10 sm:py-14">
-//         <AboutUs />
-//       </section>
-//     </div>
-//   );
-// };
-
-// export default Home;

@@ -638,6 +638,14 @@ useEffect(() => {
           {plans.map((plan) => {
             const Icon = plan.icon;
             const isDark = plan.isRecommended;
+            const isCurrentPlan =
+  currentPlan?.active && currentPlan?.planId === plan.id;
+
+const hasCreditsRemaining =
+  isCurrentPlan && currentPlan.interviewsRemaining > 0;
+
+const disableButton = isCurrentPlan && hasCreditsRemaining;
+
             
             return (
               <motion.div 
@@ -695,27 +703,36 @@ useEffect(() => {
 
                 {/* Action Button */}
                 <button
-                  onClick={() => handlePlanSelect(plan.id)}
-                  disabled={isProcessing && selectedPlan === plan.id}
-                  className={`
-                    w-full py-4 rounded-2xl font-bold text-sm tracking-wide transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 group
-                    ${isProcessing && selectedPlan === plan.id
-                      ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                      : isDark 
-                        ? 'bg-[#D4F478] text-black hover:bg-white hover:scale-[1.02]' 
-                        : 'bg-[#1A1A1A] text-white hover:bg-gray-800'
-                    }
-                  `}
-                >
-                  {isProcessing && selectedPlan === plan.id ? (
-                    <>Processing...</>
-                  ) : (
-                    <>
-                      Choose {plan.name}
-                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                    </>
-                  )}
-                </button>
+  onClick={() => handlePlanSelect(plan.id)}
+  disabled={disableButton || (isProcessing && selectedPlan === plan.id)}
+  className={`
+    w-full py-4 rounded-2xl font-bold text-sm tracking-wide transition-all shadow-lg flex items-center justify-center gap-2
+    ${
+      disableButton
+        ? 'bg-green-100 text-green-700 cursor-not-allowed'
+        : isProcessing && selectedPlan === plan.id
+          ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+          : isDark
+            ? 'bg-[#D4F478] text-black hover:bg-white hover:scale-[1.02]'
+            : 'bg-[#1A1A1A] text-white hover:bg-gray-800'
+    }
+  `}
+>
+  {disableButton ? (
+    <>
+      <CheckCircle2 className="w-5 h-5" />
+      Current Plan
+    </>
+  ) : isProcessing && selectedPlan === plan.id ? (
+    <>Processing...</>
+  ) : (
+    <>
+      Choose {plan.name}
+      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+    </>
+  )}
+</button>
+
               </motion.div>
             );
           })}

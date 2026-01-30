@@ -25,6 +25,11 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+  const [search, setSearch] = useState("");
+const [showSuggestions, setShowSuggestions] = useState(false);
+const [courses, setCourses] = useState([]);
+
+
 
   const { user, isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
@@ -33,24 +38,69 @@ const Header = () => {
   const searchInputRef = useRef(null);
   const profileDropdownRef = useRef(null);
 
+  const searchSuggestions = [
+  ...(search.toLowerCase().includes("interview")
+    ? [{ label: "Interview Practice", path: "/services/check-your-ability" }]
+    : []),
+
+  ...(search.toLowerCase().includes("course") ||
+  search.toLowerCase().includes("learn")
+    ? [{ label: "Courses & Learning", path: "/services/learn--perform" }]
+    : []),
+];
+
+
   const getInitialsSeed = (fullName) => {
     if (!fullName) return "User";
     const parts = fullName.trim().split(" ");
     return parts.length === 1 ? parts[0] : `${parts[0]} ${parts[parts.length - 1]}`;
   };
 
+  const filteredCourses = search.length === 0
+  ? courses
+  : courses.filter((course) => {
+      const name = course.name || course.title || "";
+      return name.toLowerCase().includes(search.toLowerCase());
+    });
+
+
+
+  useEffect(() => {
+  const fetchCourses = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/api/courses");
+      const data = await res.json();
+
+      const list = Array.isArray(data)
+        ? data
+        : data.courses || data.data || [];
+
+      setCourses(list);
+    } catch (err) {
+      console.error("Header search courses fetch failed", err);
+    }
+  };
+
+  fetchCourses();
+}, []);
+
+
   // --- EFFECTS ---
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (headerRef.current && !headerRef.current.contains(event.target)) {
-        setIsSearchVisible(false);
-        setIsMobileMenuOpen(false);
-        setIsProfileDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const handleClickOutside = (event) => {
+    if (headerRef.current && !headerRef.current.contains(event.target)) {
+      setIsSearchVisible(false);
+      setShowSuggestions(false);
+      setSearch("");
+      setIsMobileMenuOpen(false);
+      setIsProfileDropdownOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
+
 
   useEffect(() => {
     if (isSearchVisible && searchInputRef.current) searchInputRef.current.focus();
@@ -64,9 +114,18 @@ const Header = () => {
 
   // --- HANDLERS ---
   const handleSearchClick = (e) => {
-    e.preventDefault();
-    setIsSearchVisible(true);
-  };
+  e.preventDefault();
+  setIsSearchVisible(true);
+  setShowSuggestions(true); // 👈 THIS IS THE KEY
+};
+
+const INTERVIEW_SEARCH_ITEM = {
+  label: "Interview Practice",
+  description: "AI-powered mock interviews",
+  path: "/services/check-your-ability",
+};
+
+
   const handleMuteClick = () => setIsMuted(!isMuted);
   const handleNotificationsClick = () => console.log("Notifications clicked!");
   const handleProfileClick = () => setIsProfileDropdownOpen(!isProfileDropdownOpen);
@@ -127,12 +186,28 @@ const Header = () => {
                     className="flex items-center overflow-hidden"
                   >
                     <input
-                      ref={searchInputRef}
-                      type="text"
-                      placeholder="Search topics..."
-                      className="w-40 bg-transparent border-none focus:ring-0 outline-none text-gray-900 placeholder-gray-400 text-xs"
-                    />
-                    <button onClick={() => setIsSearchVisible(false)}>
+  ref={searchInputRef}
+  type="text"
+  value={search}
+  onChange={(e) => {
+    setSearch(e.target.value);
+    setShowSuggestions(true);
+  }}
+  onBlur={() => {
+    setTimeout(() => setShowSuggestions(false), 150);
+  }}
+  placeholder="Search topics..."
+  className="w-40 bg-transparent border-none focus:ring-0 outline-none text-gray-900 placeholder-gray-400 text-xs"
+/>
+
+                    <button
+  onClick={() => {
+    setIsSearchVisible(false);
+    setSearch("");
+    setShowSuggestions(false);
+  }}
+>
+
                         <X className="w-3.5 h-3.5 text-gray-400 hover:text-black" />
                     </button>
                   </motion.div>
@@ -147,6 +222,74 @@ const Header = () => {
                   </motion.button>
                 )}
               </AnimatePresence>
+
+              <AnimatePresence>
+  {showSuggestions && (
+    <motion.div
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -6 }}
+      className="absolute top-full mt-3 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
+    >
+    {/* 🔹 INTERVIEW (ALWAYS ON TOP) */}
+<button
+  onClick={() => {
+    setShowSuggestions(false);
+    setSearch("");
+    navigate(INTERVIEW_SEARCH_ITEM.path);
+  }}
+  className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-100"
+>
+  <div className="text-sm font-bold text-gray-900">
+    {INTERVIEW_SEARCH_ITEM.label}
+  </div>
+  <div className="text-xs text-gray-500">
+    {INTERVIEW_SEARCH_ITEM.description}
+  </div>
+</button>
+
+{/* 🔹 COURSES */}
+{filteredCourses.length === 0 ? (
+  <div className="px-4 py-3 text-xs text-gray-400">
+    No courses found
+  </div>
+) : (
+  filteredCourses.slice(0, 6).map((course) => (
+    <button
+      key={course._id}
+      onClick={() => {
+        setShowSuggestions(false);
+        setSearch("");
+        navigate(`/services/learn-and-perform/${course._id}`);
+      }}
+      className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+    >
+      {course.name || course.title}
+    </button>
+  ))
+)}
+
+      
+
+
+      {/* {filteredCourses.slice(0, 6).map((course) => (
+  <button
+    key={course._id}
+    onClick={() => {
+      setShowSuggestions(false);
+      setSearch("");
+      navigate(`/services/learn-and-perform/${course._id}`);
+    }}
+    className="w-full px-4 py-3 text-left text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+  >
+    {course.name || course.title}
+  </button>
+))} */}
+
+    </motion.div>
+  )}
+</AnimatePresence>
+
             </div>
 
             <div className="h-4 w-px bg-gray-200"></div>

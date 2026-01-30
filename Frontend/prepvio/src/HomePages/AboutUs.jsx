@@ -120,7 +120,7 @@ const hasInterviewCredits = user?.subscription?.interviewsRemaining > 0;
 
         <div>
           <h4 className="text-3xl font-black text-white mb-2">
-            You've Got Interview Credits 🎉
+            You've Got Interview Credits 
           </h4>
           <p className="text-gray-400">
             You have{" "}

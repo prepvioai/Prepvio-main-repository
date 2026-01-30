@@ -37,6 +37,7 @@ function LearnAndPerform() {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  
   const navigate = useNavigate();
 
   useEffect(() => {

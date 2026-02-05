@@ -13,7 +13,7 @@ import {
   MonitorPlay,
   AlertCircle,
   Sparkles,
-
+  Rocket,  
   ChevronRight,
   LayoutDashboard,
   LogOut
@@ -97,12 +97,20 @@ const ChannelCard = ({ name, imageUrl, selectedVideoId, channelId, courseId }) =
         </div>
         <div className="min-w-0 flex-1">
           <div className="text-xl font-black text-gray-900 line-clamp-1">{name || "Channel Name"}</div>
-          <div
-            onClick={openNewGoogleDoc}
-            className="mt-1 text-sm font-bold text-indigo-600 cursor-pointer hover:underline flex items-center gap-1"
-          >
-            <Layers className="w-3 h-3" /> Create New Notes
-          </div>
+          <div className="mt-1 text-sm font-bold text-indigo-600 cursor-pointer hover:underline flex items-center gap-3">
+  <div 
+    onClick={openNewGoogleDoc}
+    className="flex items-center gap-1"
+  >
+    <Layers className="w-3 h-3" /> Create New Notes
+  </div>
+  <div 
+    onClick={() => window.location.href = '/dashboard/learning-map'}
+    className="flex items-center gap-1 text-emerald-600 hover:text-emerald-700"
+  >
+    <Rocket className="w-3 h-3" /> Projects
+  </div>
+</div>
         </div>
       </div>
 

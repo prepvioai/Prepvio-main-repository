@@ -17,6 +17,7 @@ import {
   Bell,
   BookOpen,
   HelpCircle,
+  Rocket,
   X // Added X for mobile close
 } from "lucide-react";
 
@@ -307,7 +308,7 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
             collapsed={isCollapsed}
           />
 
-
+          <SidebarLink icon={Rocket} label="Project Map" to="/dashboard/learning-map" collapsed={isCollapsed} />
           <DropdownMenu title="Saved Courses" icon={Bookmark} collapsed={isCollapsed} setSidebarCollapsed={setIsCollapsed} >
             <SidebarLink icon={Bookmark} label="My Courses" to="/dashboard/saved-courses" collapsed={isCollapsed} />
           </DropdownMenu>

@@ -29,6 +29,7 @@ import promoCodeRoutes from "./Routes/promoCodeRoute.js";
 
 import chatRoutes from "./Routes/chatRoutes.js";
 import aiRoutes from "./Routes/aiRoutes.js";
+import projectSubmissionRoutes from "./Routes/ProjectSubmission.route.js";
 
 const nervousCaptures = new Map();
 import fs from "fs";
@@ -55,6 +56,7 @@ app.use(passport.initialize());
 app.use("/api/payment", verifyPayment);
 app.use("/api/chat", chatRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/project-submissions", projectSubmissionRoutes);
 
 // Attach socket.io to request object
 app.use((req, res, next) => {

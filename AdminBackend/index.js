@@ -1,18 +1,21 @@
+import "./env.js";
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import dotenv from 'dotenv';
-import servicesRouter from './server/routes/services.route.js';
-import coursesRouter from './server/routes/courses.route.js';
-import channelsRouter from './server/routes/channels.route.js';
-import playlistsRouter from './server/routes/playlists.route.js';
-import quizzesRouter from './server/routes/quizzes.route.js';
-import videosRouter from './server/routes/videos.route.js'; // ✅ Import videos route
-import categoryRoutes from "./server/routes/categories.route.js";
-import dashboardRouter from "./server/routes/dashboard.route.js";
+// import dotenv from 'dotenv';
+import servicesRouter from './Server/routes/services.route.js';
+import coursesRouter from './Server/routes/courses.route.js';
+import channelsRouter from './Server/routes/channels.route.js';
+import playlistsRouter from './Server/routes/playlists.route.js';
+import quizzesRouter from './Server/routes/quizzes.route.js';
+import videosRouter from './Server/routes/videos.route.js'; // ✅ Import videos route
+import categoryRoutes from "./Server/routes/categories.route.js";
+import dashboardRouter from "./Server/routes/dashboard.route.js";
 import AptitudeRouter from './Server/routes/aptitude.route.js'
+import projectsRouter from './Server/routes/projects.route.js'; // ✅ Import projects route
+import submissionsRouter from './Server/routes/submissions.route.js'; // ✅ Import submissions route
 
-dotenv.config();
+
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -39,6 +42,7 @@ app.use(
 app.use(express.json());
 
 // Database Connection
+console.log('AdminBackend connecting to:', process.env.MONGO_URI);
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.error('MongoDB connection error:', err));
@@ -53,6 +57,8 @@ app.use('/api/videos', videosRouter);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/aptitude", AptitudeRouter);
+app.use('/api/projects', projectsRouter); // ✅ Register projects route
+app.use('/api/project-submissions', submissionsRouter); // ✅ Register submissions route
 
 
 // Start the server

@@ -7,9 +7,9 @@ const router = express.Router();
 // ✅ Create course
 router.post("/", async (req, res) => {
   try {
-    const { name, description, imageUrl, channels, categoryId } = req.body;
+    const { name, description, imageUrl, channels, categoryId, totalLevels } = req.body;
 
-    const course = new Course({ name, description, imageUrl, channels: channels || [], categoryId });
+    const course = new Course({ name, description, imageUrl, channels: channels || [], categoryId, totalLevels });
     await course.save();
 
     if (channels && channels.length > 0) {
@@ -56,7 +56,7 @@ router.get("/:id", async (req, res) => {
 // ✅ Update course
 router.put("/:id", async (req, res) => {
   try {
-    const { name, description, imageUrl, channels, categoryId } = req.body;
+    const { name, description, imageUrl, channels, categoryId, totalLevels } = req.body;
 
     const course = await Course.findById(req.params.id);
     if (!course) return res.status(404).json({ message: "Course not found" });
@@ -65,6 +65,7 @@ router.put("/:id", async (req, res) => {
     course.description = description || course.description;
     course.imageUrl = imageUrl || course.imageUrl;
     course.categoryId = categoryId || course.categoryId;
+    course.totalLevels = totalLevels !== undefined ? totalLevels : course.totalLevels;
     if (channels) course.channels = channels;
 
     await course.save();

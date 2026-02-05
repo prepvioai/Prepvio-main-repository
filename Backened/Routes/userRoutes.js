@@ -661,6 +661,105 @@ import { deduplicateCourseProgress } from "../Utils/courseHelper.js";
 const router = express.Router();
 
 /* =========================================================
+   GET COMPLETED COURSES
+========================================================= */
+router.get("/completed-courses", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).lean();
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Logic: A course is completed if it's in courseProgress with 90% completion
+    // OR if it's explicitly marked via our new feature (we'll assume totalSeconds = watchedSeconds for manual completion)
+    const completedCourses = (user.courseProgress || [])
+      .filter((c) => c.totalSeconds > 0 && c.watchedSeconds >= c.totalSeconds * 0.9)
+      .map((c) => ({
+        _id: c.courseId,
+        courseId: c.courseId,
+        name: c.courseTitle,
+        thumbnail: c.courseThumbnail,
+        completedAt: c.lastAccessed
+      }));
+
+    res.json({
+      success: true,
+      completedCourses
+    });
+  } catch (err) {
+    console.error("Error fetching completed courses:", err);
+    res.status(500).json({ message: "Failed to fetch completed courses" });
+  }
+});
+
+/* =========================================================
+   MANUALLY COMPLETE COURSE (For Certification/Project Map)
+========================================================= */
+router.post("/complete-course/:courseId", verifyToken, async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.courseProgress) {
+      user.courseProgress = [];
+    }
+
+    // Find existing progress or create new
+    let courseProgress = user.courseProgress.find(c => c.courseId === courseId);
+
+    if (courseProgress) {
+      // Mark as fully watched
+      courseProgress.watchedSeconds = courseProgress.totalSeconds || 3600; // Default to 1 hour if 0
+      courseProgress.totalSeconds = courseProgress.watchedSeconds; // Ensure 100%
+      courseProgress.lastAccessed = new Date();
+    } else {
+      // Create new entry (we might be missing details like channelId, but we'll try to handle it)
+      // Ideally frontend sends more data, but for now we'll create a stub for completion tracking
+      // NOTE: This relies on the "Mark Complete" feature being used mainly for courses that MIGHT validly exist without channel progress yet?
+      // Actually, better to require the user to have started it, OR we fetch course details.
+      // For robustness, let's just create a completion record.
+
+      // IF we don't have channel info, we might break other things dependent on channelId.
+      // However, the CourseCompletion.jsx is simple.
+
+      // Let's assume for this specific manual "Mark Complete" feature, we just ensure it exists in progress with 100%.
+      // We'll use a placeholder channel if missing, or just update if exists.
+
+      user.courseProgress.push({
+        courseId,
+        courseTitle: "Manually Completed Course", // Placeholder, ideally fetch from Course DB if possible, but avoiding cross-db calls here
+        channelId: "manual_completion",
+        channelName: "Manual Completion",
+        totalSeconds: 3600,
+        watchedSeconds: 3600,
+        lastAccessed: new Date(),
+        videos: []
+      });
+    }
+
+    await user.save();
+
+    // Send notification
+    try {
+      await sendCourseCompletedNotification(user._id, courseId, courseProgress?.courseTitle || "Course");
+    } catch (error) {
+      console.error("Notification failed", error);
+    }
+
+    res.json({ success: true, message: "Course marked as completed" });
+
+  } catch (err) {
+    console.error("Error completing course:", err);
+    res.status(500).json({ message: "Failed to complete course" });
+  }
+});
+
+
+/* =========================================================
    PORTFOLIO & PROJECTS
 ========================================================= */
 router.get("/portfolio", verifyToken, async (req, res) => {

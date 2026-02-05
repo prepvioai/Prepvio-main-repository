@@ -24,6 +24,8 @@ import ListPage from "./Components/dashboard.jsx";
 import AnalyticsDashboard from "./Components/dashboard.jsx";
 // import services from './Components/ServiceManagement.jsx';
 import ServiceManagement from "./Components/ServiceManagement.jsx";
+import ProjectManagement from "./Components/ProjectManagement.jsx";
+import ProjectSubmissions from "./Components/ProjectSubmissions.jsx";
 
 export default function App() {
   return (
@@ -42,6 +44,9 @@ export default function App() {
         <Route path="hdashboard" element={<HDashboard />} />
         <Route path="customer" element={<Customer />} />
         <Route path="calender" element={<Calender />} />
+        <Route path="projects" element={<ProjectManagement />} />
+        <Route path="project-submissions" element={<ProjectSubmissions />} />
+
 
         {/* Helpdesk */}
         <Route path="help-desk/ticket/create" element={<CreateTicket />} />

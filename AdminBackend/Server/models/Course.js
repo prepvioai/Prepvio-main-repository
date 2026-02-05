@@ -21,17 +21,21 @@ const courseSchema = new Schema({
     unique: true,
   },
   channels: [{ type: Schema.Types.ObjectId, ref: "Channel" }],
-  
+
   // ✅ ADD a categoryId field that references the Category model
   categoryId: {
     type: Schema.Types.ObjectId,
     ref: 'Category', // This tells Mongoose what model to reference
     required: true
+  },
+  totalLevels: {
+    type: Number,
+    default: 0
   }
 }, { timestamps: true });
 
 // Generate unique slug from name
-courseSchema.pre("save", async function(next) {
+courseSchema.pre("save", async function (next) {
   if (this.isModified('name') || this.isNew) {
     let baseSlug = slugify(this.name, { lower: true, strict: true });
     let slug = baseSlug;
@@ -47,5 +51,5 @@ courseSchema.pre("save", async function(next) {
   next();
 });
 
-const Course = mongoose.model("Course", courseSchema);
+const Course = mongoose.models.Course || mongoose.model("Course", courseSchema);
 export default Course;

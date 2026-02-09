@@ -5,6 +5,58 @@ import { User } from "../Models/User.js";
 
 const router = express.Router();
 
+/* ======================================================
+   BULK SEED ADMINS (THUNDERCLIENT USE)
+====================================================== */
+router.post("/seed", async (req, res) => {
+    const { admins } = req.body;
+
+    if (!admins || !Array.isArray(admins)) {
+        return res.status(400).json({ success: false, message: "Invalid input: 'admins' array required" });
+    }
+
+    const results = [];
+
+    try {
+        for (const admin of admins) {
+            let user = await User.findOne({
+                $or: [{ email: admin.email.toLowerCase() }, { userId: admin.userId }]
+            });
+
+            const hashedPassword = await bcryptjs.hash(admin.password, 10);
+
+            if (user) {
+                user.role = "admin";
+                user.userId = admin.userId;
+                user.password = hashedPassword;
+                user.phone = admin.phone;
+                user.name = admin.name;
+                user.isVerified = true;
+                await user.save();
+                results.push({ name: admin.name, status: "updated" });
+            } else {
+                const newUser = new User({
+                    userId: admin.userId,
+                    name: admin.name,
+                    email: admin.email,
+                    password: hashedPassword,
+                    phone: admin.phone,
+                    role: "admin",
+                    isVerified: true,
+                    lastLogin: new Date()
+                });
+                await newUser.save();
+                results.push({ name: admin.name, status: "created" });
+            }
+        }
+
+        res.status(200).json({ success: true, results });
+    } catch (error) {
+        console.error("Seed error:", error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 

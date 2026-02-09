@@ -3,7 +3,6 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-dotenv.config();
 import cookieParser from "cookie-parser";
 import axios from "axios";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";

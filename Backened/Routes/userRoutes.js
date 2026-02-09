@@ -1,5 +1,5 @@
 import express from "express";
-import { User } from "../models/User.js";
+import { User } from "../Models/User.js";
 import { verifyToken, isAdmin } from "../middleware/authMiddleware.js";
 import { sendCourseStartedNotification, sendCourseCompletedNotification } from "../Utils/notificationHelper.js";
 import { deduplicateCourseProgress } from "../Utils/courseHelper.js";

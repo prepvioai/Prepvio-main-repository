@@ -1,7 +1,7 @@
 import express from "express";
 import { InterviewSession } from "../models/InterviewSession.js";
 import { verifyToken, isAdmin } from "../../middleware/authMiddleware.js";
-import { User } from "../../models/User.js"; // ✅ ADD THIS
+import { User } from "../../Models/User.js"; // ✅ ADD THIS
 import { sendInterviewCompletedNotification, sendCreditsExhaustedNotification } from "../../Utils/notificationHelper.js";
 
 const router = express.Router();

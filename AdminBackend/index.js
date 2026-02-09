@@ -18,7 +18,6 @@ import submissionsRouter from './Server/routes/submissions.route.js'; // ✅ Imp
 
 
 const app = express();
-const PORT = process.env.PORT || 8000;
 
 // Middleware
 app.use(express.json());

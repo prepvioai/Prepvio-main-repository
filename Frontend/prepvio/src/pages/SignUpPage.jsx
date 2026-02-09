@@ -27,7 +27,7 @@ const SignUpPage = () => {
 
   const { signup, error, isLoading, user } = useAuthStore();
   const handleGoogleSignup = () => {
-    window.location.href = "/api/auth/google";
+    window.location.href = "/api/auth/google?mode=signup";
   };
 
 
@@ -158,6 +158,11 @@ const SignUpPage = () => {
             >
               {isLoading ? <Loader className="animate-spin" size={20} /> : "Create account"}
             </motion.button>
+
+            {/* Implied Consent Text */}
+            <p className="text-[10px] text-gray-400 text-center mt-4 px-4 leading-relaxed font-medium">
+              By signing up you accept to all the <span className="text-gray-600 font-bold hover:underline cursor-pointer">Terms and Conditions</span> and <span className="text-gray-600 font-bold hover:underline cursor-pointer">Privacy Policy</span>.
+            </p>
           </form>
         </div>
 

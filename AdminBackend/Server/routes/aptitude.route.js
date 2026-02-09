@@ -1,6 +1,6 @@
 import express from "express";
 import { AptitudeTopic } from "../models/AptitudeTopic.js";
-import { verifyToken } from "../../../Backened/middleware/verifytoken.js";
+import { verifyToken } from "../middleware/verifyToken.js";
 
 const router = express.Router();
 
@@ -60,14 +60,14 @@ router.get("/questions/random", async (req, res) => {
       { $sample: { size: limit } },
       {
         $project: {
-  _id: "$questions._id",
-  question: "$questions.question",
-  options: "$questions.options",
-  difficulty: "$questions.difficulty",
-  correctAnswerIndex: "$questions.correctAnswerIndex",
-  explanation: "$questions.explanation",
-  topic: "$topic",
-},
+          _id: "$questions._id",
+          question: "$questions.question",
+          options: "$questions.options",
+          difficulty: "$questions.difficulty",
+          correctAnswerIndex: "$questions.correctAnswerIndex",
+          explanation: "$questions.explanation",
+          topic: "$topic",
+        },
       },
     ]);
 

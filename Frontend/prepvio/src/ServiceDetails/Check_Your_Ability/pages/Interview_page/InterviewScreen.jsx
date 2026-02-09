@@ -655,7 +655,7 @@ function DynamicModel({ speechText, onSpeechEnd, ...props }) {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(speechText);
-    utterance.rate = 2.0;  // Slower, more natural pace (0.9 = 90% of normal speed)
+    utterance.rate = 1.0;  // Slower, more natural pace (0.9 = 90% of normal speed)
     utterance.pitch = 1.0; // Normal pitch
     utterance.volume = 1.0; // Full volume
 

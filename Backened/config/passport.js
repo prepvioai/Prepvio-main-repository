@@ -9,14 +9,21 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "/api/auth/google/callback",
+      passReqToCallback: true,
     },
-    async (_, __, profile, done) => {
+    async (req, _, __, profile, done) => {
       try {
         const email = profile.emails[0].value;
+        const mode = req.query.state;
 
         let user = await User.findOne({ email });
 
         if (!user) {
+          // 🚫 If mode is 'login', do not create new user
+          if (mode === "login") {
+            return done(null, false, { message: "Account doesn't exist. Please sign up first." });
+          }
+
           user = await User.create({
             name: profile.displayName,
             email,

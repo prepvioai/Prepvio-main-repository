@@ -31,9 +31,13 @@ router.post("/reset-password/:token", resetPassword);
 // Step 1: Redirect user to Google
 router.get(
   "/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-  })
+  (req, res, next) => {
+    const { mode } = req.query;
+    passport.authenticate("google", {
+      scope: ["profile", "email"],
+      state: mode || "login",
+    })(req, res, next);
+  }
 );
 
 // Step 2: Google redirects back here

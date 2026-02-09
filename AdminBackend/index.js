@@ -46,9 +46,17 @@ app.use(cookieParser());
 
 // Database Connection
 console.log('AdminBackend connecting to:', process.env.MONGO_URI);
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch(err => console.error('MongoDB connection error:', err));
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected) return;
+
+  await mongoose.connect(process.env.MONGO_URI);
+  isConnected = true;
+}
+
+await connectDB();
+
 
 // Routes (Protected)
 app.use('/api/services', verifyToken, servicesRouter);
@@ -65,4 +73,7 @@ app.use('/api/project-submissions', verifyToken, submissionsRouter); // ✅ Regi
 
 
 // Start the server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+export default app;
+

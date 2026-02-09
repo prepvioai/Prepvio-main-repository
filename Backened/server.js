@@ -372,7 +372,7 @@ app.post("/run", async (req, res) => {
 
 // --- 10. Health checks ---
 app.get("/", (req, res) => {
-  res.send("🚀 Virtual Interview Backend Running Successfully!");
+  res.send("prepvio main backend running successfully");
 });
 
 app.get("/health", (req, res) => {
@@ -431,12 +431,13 @@ io.on("connection", (socket) => {
 export { io };
 
 // --- 12. Start Server ---
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  ConnectDB();
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log("✅ MongoDB Connected via ConnectDB()");
-  if (process.env.R2_BUCKET_NAME) {
-    console.log(`📁 R2 Bucket: ${process.env.R2_BUCKET_NAME}`);
-  }
-});
+// server.listen(PORT, () => {
+//   ConnectDB();
+//   console.log(`🚀 Server running on http://localhost:${PORT}`);
+//   console.log("✅ MongoDB Connected via ConnectDB()");
+//   if (process.env.R2_BUCKET_NAME) {
+//     console.log(`📁 R2 Bucket: ${process.env.R2_BUCKET_NAME}`);
+//   }
+// });
+
+export default app

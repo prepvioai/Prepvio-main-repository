@@ -45,7 +45,7 @@ const CourseManagement = () => {
   const [courseImageUrl, setCourseImageUrl] = useState("");
   const [totalLevels, setTotalLevels] = useState(0);
 
-  const BASE_URL = "http://localhost:8000/api";
+  const BASE_URL = "https://prepvio-admin-backend.vercel.app/api";
 
   // --- Helper: Generate Stats for UI Display ---
   const getStats = (id) => {

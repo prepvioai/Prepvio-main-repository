@@ -82,10 +82,10 @@ const Dashboard = () => {
 
         // Fetch all data with proper error handling
         const [revenueRes, analyticsRes, ticketsRes, usersRes] = await Promise.allSettled([
-          axios.get('http://localhost:5000/api/revenue/overview', config),
-          axios.get('http://localhost:5000/api/revenue/analytics', config),
-          axios.get('http://localhost:5000/api/tickets/admin/all', config),
-          axios.get('http://localhost:5000/api/users/admin/all-users', config)
+          axios.get('https://prepvio-main-backend.vercel.app/api/revenue/overview', config),
+          axios.get('https://prepvio-main-backend.vercel.app/api/revenue/analytics', config),
+          axios.get('https://prepvio-main-backend.vercel.app/api/tickets/admin/all', config),
+          axios.get('https://prepvio-main-backend.vercel.app/api/users/admin/all-users', config)
         ]);
 
         // Count how many requests failed with 401 (Unauthorized)
@@ -171,7 +171,7 @@ const Dashboard = () => {
     try {
       setIsDeleting(true);
       const token = localStorage.getItem('adminToken');
-      const res = await axios.delete(`http://localhost:5000/api/users/admin/delete/${userToDelete.id || userToDelete._id}`, {
+      const res = await axios.delete(`https://prepvio-main-backend.vercel.app/api/users/admin/delete/${userToDelete.id || userToDelete._id}`, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true
       });

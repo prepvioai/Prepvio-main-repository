@@ -17,7 +17,7 @@ const VideoList = ({ playlist, channelName, courseName, onBack }) => {
       setError(null);
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/videos/youtube/${playlist.link}`
+          `https://prepvio-admin-backend.vercel.app/api/videos/youtube/${playlist.link}`
         );
         setVideos(res.data.data || []);
       } catch (err) {

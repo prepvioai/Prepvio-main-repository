@@ -31,9 +31,9 @@ const PlaylistManagement = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [contentToDelete, setContentToDelete] = useState(null);
 
-  const API_URL = "http://localhost:8000/api/playlists";
-  const CHANNEL_API_URL = "http://localhost:8000/api/channels";
-  const COURSE_API_URL = "http://localhost:8000/api/courses";
+  const API_URL = "https://prepvio-admin-backend.vercel.app/api/playlists";
+  const CHANNEL_API_URL = "https://prepvio-admin-backend.vercel.app/api/channels";
+  const COURSE_API_URL = "https://prepvio-admin-backend.vercel.app/api/courses";
 
   // Helper function to extract YouTube video ID from URL
   const extractVideoId = (url) => {
@@ -514,7 +514,7 @@ export default PlaylistManagement;
 //       try {
 //         // Updated to use the specific API endpoint provided in your query
 //         const res = await axios.get(
-//           `http://localhost:8000/api/videos/youtube/${playlist.link}`
+//           `https://prepvio-admin-backend.vercel.app/api/videos/youtube/${playlist.link}`
 //         );
 //         setVideos(res.data.data || []);
 //       } catch (err) {
@@ -703,9 +703,9 @@ export default PlaylistManagement;
 //   const [selectedChannelName, setSelectedChannelName] = useState("");
 //   const [selectedCourseName, setSelectedCourseName] = useState("");
 
-//   const API_URL = "http://localhost:8000/api/playlists";
-//   const CHANNEL_API_URL = "http://localhost:8000/api/channels";
-//   const COURSE_API_URL = "http://localhost:8000/api/courses";
+//   const API_URL = "https://prepvio-admin-backend.vercel.app/api/playlists";
+//   const CHANNEL_API_URL = "https://prepvio-admin-backend.vercel.app/api/channels";
+//   const COURSE_API_URL = "https://prepvio-admin-backend.vercel.app/api/courses";
 
 //   const extractVideoId = (url) => {
 //     if (!url) return null;

@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import axios from 'axios';
 
 // Global Axios Configuration
-axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL = 'https://prepvio-main-backend.vercel.app';
 axios.defaults.withCredentials = true;
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("adminToken");

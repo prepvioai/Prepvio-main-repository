@@ -13,7 +13,7 @@ const ProjectSubmissions = () => {
     const [filterStatus, setFilterStatus] = useState("all");
     const [connectionError, setConnectionError] = useState(false);
 
-    const API_URL = "http://localhost:8000/api/project-submissions";
+    const API_URL = "https://prepvio-admin-backend.vercel.app/api/project-submissions";
 
     useEffect(() => {
         fetchSubmissions();
@@ -48,7 +48,7 @@ const ProjectSubmissions = () => {
 
             if (err.code === 'ECONNABORTED' || err.code === 'ERR_NETWORK' || !err.response) {
                 setConnectionError(true);
-                setError("Cannot connect to server. Please ensure the backend is running on http://localhost:8000");
+                setError("Cannot connect to server. Please ensure the backend is running on https://prepvio-admin-backend.vercel.app");
             } else if (err.response?.status === 404) {
                 setConnectionError(true);
                 setError("Submissions endpoint not found. Please check your backend API routes.");
@@ -194,7 +194,7 @@ const ProjectSubmissions = () => {
                                 <ul className="text-sm text-slate-500 space-y-1 mt-4 text-left max-w-md mx-auto">
                                     <li className="flex items-start gap-2">
                                         <span className="text-blue-500 font-bold">•</span>
-                                        <span>The backend server is running on <code className="px-2 py-0.5 bg-slate-100 rounded font-mono text-xs">http://localhost:8000</code></span>
+                                        <span>The backend server is running on <code className="px-2 py-0.5 bg-slate-100 rounded font-mono text-xs">https://prepvio-admin-backend.vercel.app</code></span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <span className="text-blue-500 font-bold">•</span>

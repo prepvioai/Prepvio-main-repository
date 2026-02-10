@@ -24,7 +24,7 @@ const Departments = () => {
     const fetchDepartments = async () => {
         try {
             setLoading(true);
-            const res = await axios.get('http://localhost:5000/api/employees/departments');
+            const res = await axios.get('https://prepvio-main-backend.vercel.app/api/employees/departments');
             if (res.data.success) {
                 setDepartments(res.data.departments);
             }
@@ -43,7 +43,7 @@ const Departments = () => {
     const handleAddDepartment = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5000/api/employees/departments/add', newDept);
+            const res = await axios.post('https://prepvio-main-backend.vercel.app/api/employees/departments/add', newDept);
             if (res.data.success) {
                 toast.success("Department added successfully");
                 setIsAddModalOpen(false);

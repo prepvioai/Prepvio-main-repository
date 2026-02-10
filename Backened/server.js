@@ -46,6 +46,7 @@ app.use(cors({
 
 // --- 2. Create HTTP Server & Socket.IO (Moved up to fix initialization order) ---
 const server = http.createServer(app);
+const PORT = process.env.PORT || 5000;
 
 const io = new Server(server, {
   cors: {
@@ -429,14 +430,13 @@ io.on("connection", (socket) => {
 // 🔥 EXPORT io FOR NOTIFICATION SERVICE
 export { io };
 
-// --- 12. Start Server ---
-// server.listen(PORT, () => {
-//   ConnectDB();
-//   console.log(`🚀 Server running on http://localhost:${PORT}`);
-//   console.log("✅ MongoDB Connected via ConnectDB()");
-//   if (process.env.R2_BUCKET_NAME) {
-//     console.log(`📁 R2 Bucket: ${process.env.R2_BUCKET_NAME}`);
-//   }
-// });
+server.listen(PORT, '0.0.0.0', () => {
+  ConnectDB();
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log("✅ MongoDB Connected via ConnectDB()");
+  if (process.env.R2_BUCKET_NAME) {
+    console.log(`📁 R2 Bucket: ${process.env.R2_BUCKET_NAME}`);
+  }
+});
 
 export default app

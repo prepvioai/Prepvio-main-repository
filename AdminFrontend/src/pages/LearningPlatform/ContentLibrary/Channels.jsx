@@ -25,7 +25,7 @@ const ChannelManagement = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [channelToDelete, setChannelToDelete] = useState(null);
 
-  const API_URL = "http://localhost:8000/api/channels";
+  const API_URL = "https://prepvio-admin-backend.vercel.app/api/channels";
 
   // --- API Effects ---
   useEffect(() => {
@@ -423,7 +423,7 @@ export default ChannelManagement;
 //   const [modalType, setModalType] = useState('add');
 //   const [currentEditItem, setCurrentEditItem] = useState(null);
 
-//   const API_URL = 'http://localhost:8000/api/channels';
+//   const API_URL = 'https://prepvio-admin-backend.vercel.app/api/channels';
 
 //   const fetchChannels = async () => {
 //     setLoading(true);

@@ -28,7 +28,7 @@ import axios from 'axios';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import socket from '../../socket';
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://prepvio-main-backend.vercel.app/api";
 
 // --- Glass Card Component (Styled for Premium Light) ---
 const GlassCard = ({ children, className = "" }) => (

@@ -18,7 +18,7 @@ const CategoryManagement = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
 
-  const API_URL = "http://localhost:8000/api/categories";
+  const API_URL = "https://prepvio-admin-backend.vercel.app/api/categories";
 
   // --- API Effects ---
   useEffect(() => {
@@ -314,7 +314,7 @@ export default CategoryManagement;
 //   const [isEditing, setIsEditing] = useState(false);
 //   const [editId, setEditId] = useState(null);
 
-//   const API_URL = "http://localhost:8000/api/categories";
+//   const API_URL = "https://prepvio-admin-backend.vercel.app/api/categories";
 
 //   useEffect(() => {
 //     fetchCategories();

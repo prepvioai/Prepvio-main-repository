@@ -22,7 +22,7 @@ const QuizManagement = ({ playlistId, videoId, channelName, courseName, onBack }
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [questionToDelete, setQuestionToDelete] = useState(null);
 
-  const API_URL = "http://localhost:8000/api/quizzes";
+  const API_URL = "https://prepvio-admin-backend.vercel.app/api/quizzes";
 
   const fetchQuiz = async () => {
     setLoading(true);

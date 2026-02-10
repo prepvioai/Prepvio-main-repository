@@ -22,7 +22,7 @@ const Attendance = () => {
     const fetchAttendance = async () => {
         try {
             setLoading(true);
-            const res = await axios.get('http://localhost:5000/api/employees/attendance/daily');
+            const res = await axios.get('https://prepvio-main-backend.vercel.app/api/employees/attendance/daily');
             if (res.data.success) {
                 setAttendanceData(res.data.attendance);
             }

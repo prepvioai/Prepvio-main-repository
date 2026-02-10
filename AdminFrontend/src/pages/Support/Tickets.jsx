@@ -25,7 +25,7 @@ const TicketList = () => {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/tickets/admin/all', { withCredentials: true });
+        const response = await axios.get('https://prepvio-main-backend.vercel.app/api/tickets/admin/all', { withCredentials: true });
         if (response.data.success) {
           // Map backend data to frontend structure if necessary, or use as is
           setTickets(response.data.tickets.map(t => ({

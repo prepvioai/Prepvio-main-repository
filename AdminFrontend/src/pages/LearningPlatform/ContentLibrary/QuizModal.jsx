@@ -18,7 +18,7 @@ const QuizModal = ({ video, playlist, channelName, courseName, onClose }) => {
     setError(null);
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/quizzes/by-video/${playlist._id}/${video.videoId}`
+        `https://prepvio-admin-backend.vercel.app/api/quizzes/by-video/${playlist._id}/${video.videoId}`
       );
       setQuiz(res.data.quiz); // Get the nested videoQuiz object
     } catch (err) {
@@ -45,7 +45,7 @@ const QuizModal = ({ video, playlist, channelName, courseName, onClose }) => {
     }
 
     try {
-      const res = await axios.post("http://localhost:8000/api/quizzes/by-course", {
+      const res = await axios.post("https://prepvio-admin-backend.vercel.app/api/quizzes/by-course", {
         playlistId: playlist._id,
         videoId: video.videoId,
         videoTitle: video.title, // Pass video title to the backend
@@ -67,7 +67,7 @@ const QuizModal = ({ video, playlist, channelName, courseName, onClose }) => {
   const deleteQuestion = async (questionId) => {
     try {
       // Corrected DELETE endpoint
-      const res = await axios.delete(`http://localhost:8000/api/quizzes/${playlist._id}/${video.videoId}/questions/${questionId}`);
+      const res = await axios.delete(`https://prepvio-admin-backend.vercel.app/api/quizzes/${playlist._id}/${video.videoId}/questions/${questionId}`);
       setQuiz(res.data.quiz.videos.find(v => v.videoId === video.videoId));
     } catch (err) {
       alert(err.response?.data?.message || err.message);

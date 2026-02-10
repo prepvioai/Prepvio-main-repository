@@ -16,7 +16,7 @@ const ProfileSettings = () => {
     React.useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/auth/check-auth", { withCredentials: true });
+                const response = await axios.get("https://prepvio-main-backend.vercel.app/api/auth/check-auth", { withCredentials: true });
                 if (response.data.success) {
                     const { name, email, phone, bio, location } = response.data.user;
                     const names = name.split(" ");

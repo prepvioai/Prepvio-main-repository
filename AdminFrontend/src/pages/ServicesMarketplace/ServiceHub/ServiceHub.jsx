@@ -114,7 +114,7 @@ const ServiceManagement = () => {
   const [serviceToDelete, setServiceToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const API_URL = 'http://localhost:8000/api/services';
+  const API_URL = 'https://prepvio-admin-backend.vercel.app/api/services';
 
   const fetchServices = async () => {
     setLoading(true);
@@ -830,7 +830,7 @@ export default ServiceManagement;
 //   const [currentEditItem, setCurrentEditItem] = useState(null);
 //   const [itemData, setItemData] = useState({ title: '', description: '', slug: '' });
 
-//   const API_URL = 'http://localhost:8000/api/services';
+//   const API_URL = 'https://prepvio-admin-backend.vercel.app/api/services';
 
 //   const fetchServices = async () => {
 //     setLoading(true);
